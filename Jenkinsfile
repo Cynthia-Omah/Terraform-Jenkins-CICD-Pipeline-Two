@@ -32,6 +32,12 @@ pipeline {
                 sh 'terraform plan'
             }
         }
+        // Checkov Infrastructure Automation Test
+        stage('Checkov scan') {
+            steps {
+                sh 'checkov -d .'
+            }
+        }
         // Deployment Apporval
         stage('Manual Approval') {
             steps {
@@ -48,7 +54,7 @@ pipeline {
     post {
     always {
         echo 'Slack Notifications.'
-        slackSend channel: '#ma-terraform-cicd-alerts', //update and provide your channel name
+        slackSend channel: '#cynthia-o-terraform-cicd-alerts', //update and provide your channel name
         color: COLOR_MAP[currentBuild.currentResult],
         message: "*${currentBuild.currentResult}:* Job Name '${env.JOB_NAME}' build ${env.BUILD_NUMBER} \n Build Timestamp: ${env.BUILD_TIMESTAMP} \n Project Workspace: ${env.WORKSPACE} \n More info at: ${env.BUILD_URL}"
     }
